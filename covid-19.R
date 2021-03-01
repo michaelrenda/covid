@@ -71,7 +71,7 @@ plotUnit <- function(sumUnit, unitName, unitTitle1, unitTitle2, unitDir) {
   p <- ggplot(data=sumUnit, mapping = aes(x=as.Date(obs_date), y=new_cases)) +
   geom_bar(stat = "identity", color = "blue", fill = "blue") +
   theme(plot.caption = element_text(size = 8, color = "Blue")) +
-  scale_x_date(date_breaks = "4 weeks", date_labels =  "%m/%d/%y") +
+  scale_x_date(date_breaks = "6 weeks", date_labels =  "%m/%d/%y") +
   labs(x = "", y = "", title=unitTitle1, subtitle="with smoothed trend line", caption=paste0("Cumulative: ",cumNumber, " cases\nUpdated: ",date(),"\nSource: Center for Systems Science and Engineering at Johns Hopkins University")) + geom_smooth(alpha=.5, color="cyan4", method="gam")
   ggsave(paste0(unitDir, unitName,"Confirmed.png"),plot = p, width=8, height=5);
   cumDeaths <- format(sumUnit$cum_deaths[length(sumUnit$cum_deaths)], big.mark = ",");
