@@ -66,19 +66,20 @@ newDF;
 
 ##  create the plots and save to files
 plotUnit <- function(sumUnit, unitName, unitTitle1, unitTitle2, unitDir) {
+  weeks_string = paste(c(as.integer(difftime(Sys.Date(),strptime("01.01.2020", format = "%d.%m.%Y"), units="weeks") / 12), "weeks"), collapse = " ")
   options(scipen = 8)
   cumNumber <- format(sumUnit$cum_confirmed[length(sumUnit$cum_confirmed)], big.mark = ",");
   p <- ggplot(data=sumUnit, mapping = aes(x=as.Date(obs_date), y=new_cases)) +
   geom_bar(stat = "identity", color = "blue", fill = "blue") +
   theme(plot.caption = element_text(size = 8, color = "Blue")) +
-  scale_x_date(date_breaks = "5 weeks", date_labels =  "%m/%d/%y") +
+  scale_x_date(date_breaks = weeks_string, date_labels =  "%m/%d/%y") +
   labs(x = "", y = "", title=unitTitle1, subtitle="with smoothed trend line", caption=paste0("Cumulative: ",cumNumber, " cases\nUpdated: ",date(),"\nSource: Center for Systems Science and Engineering at Johns Hopkins University")) + geom_smooth(alpha=.5, color="cyan4", method="gam")
   ggsave(paste0(unitDir, unitName,"Confirmed.png"),plot = p, width=8, height=5);
   cumDeaths <- format(sumUnit$cum_deaths[length(sumUnit$cum_deaths)], big.mark = ",");
   p <- ggplot(data=sumUnit, mapping = aes(x=as.Date(obs_date), y=new_deaths)) +
   geom_bar(stat = "identity", color = "blue", fill = "blue") +
   theme(plot.caption = element_text(size = 8, color = "Blue")) +
-  scale_x_date(date_breaks = "5 weeks", date_labels =  "%m/%d/%y") + scale_y_continuous(label = comma) +
+  scale_x_date(date_breaks = weeks_string, date_labels =  "%m/%d/%y") + scale_y_continuous(label = comma) +
   labs(x = "", y = "", title=unitTitle2, subtitle="with smoothed trend line", caption=paste0("Cumulative: ",cumDeaths, " deaths\nUpdated: ",date(),"\nSource: Center for Systems Science and Engineering at Johns Hopkins University")) + geom_smooth(alpha=.5, color="cyan4", method="gam")
   ggsave(paste0(unitDir,unitName,"Deaths.png"),plot = p, width=8, height=5);
 }
@@ -186,6 +187,9 @@ while (next_date <= Sys.Date()) {
     cWorld <- cbind(cWorld,add_date)
     cWorld <- cbind(cWorld,last_update)
       for (i in 1:nrow(cWorld)) {
+        if (is.na(cWorld$recovered[i])) {
+          cWorld$recovered[i] = 0;
+        }
         country <- cWorld$country[i];
         country <- gsub("'", "''", country)
         sql_statement = paste("INSERT INTO CSSE_COVID_19_WORLD_DATA VALUES('" , country , "', STR_TO_DATE('", cWorld$last_update[i] , "','%m-%d-%Y'), ", cWorld$confirmed[i], ", " , cWorld$deaths[i] , ", " , cWorld$recovered[i] , ", STR_TO_DATE('" , cWorld$add_date[i] , "','%Y-%m-%d'))", sep="")
