@@ -98,44 +98,44 @@ close(conn)
 startDir <- "/data/"
 
 #  download confirmed
-url <- "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
-confirmedUS <- read_csv(url)
-confirmedUSTidy <- confirmedUS %>% gather("obs_date", "cum_confirmed", - c("UID", "iso2", "iso3", "code3", "FIPS", "Admin2", "Province_State", "Country_Region", "Lat", "Long_", "Combined_Key"))
+# url <- "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
+# confirmedUS <- read_csv(url)
+# confirmedUSTidy <- confirmedUS %>% gather("obs_date", "cum_confirmed", - c("UID", "iso2", "iso3", "code3", "FIPS", "Admin2", "Province_State", "Country_Region", "Lat", "Long_", "Combined_Key"))
 
 #  download deaths
-url <- "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"
-deathsUS <- read_csv(url)
-deathsUSTidy <- deathsUS %>% gather("obs_date", "cum_deaths", - c("UID", "iso2", "iso3", "code3", "FIPS", "Admin2", "Province_State", "Country_Region", "Lat", "Long_", "Combined_Key","Population"))
+# url <- "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv"
+# deathsUS <- read_csv(url)
+# deathsUSTidy <- deathsUS %>% gather("obs_date", "cum_deaths", - c("UID", "iso2", "iso3", "code3", "FIPS", "Admin2", "Province_State", "Country_Region", "Lat", "Long_", "Combined_Key","Population"))
 
 ## process graphs for US Totals
-sumUS <- prepDF(confirmedUSTidy, deathsUSTidy)
-plotUnit(sumUS, "US", "US - New Cases Per Day", "US - Deaths per Day", startDir);
+# sumUS <- prepDF(confirmedUSTidy, deathsUSTidy)
+# plotUnit(sumUS, "US", "US - New Cases Per Day", "US - Deaths per Day", startDir);
 
 
 
 ## loop through states
-usFactor <- factor(confirmedUSTidy$Province_State);
-for (stateUS in levels(usFactor)) {
-  # extract the state
-  confirmedState <- filter(confirmedUSTidy, Province_State == stateUS)
-  deathsState <- filter(deathsUSTidy, Province_State == stateUS)
+# usFactor <- factor(confirmedUSTidy$Province_State);
+# for (stateUS in levels(usFactor)) {
+#   # extract the state
+#   confirmedState <- filter(confirmedUSTidy, Province_State == stateUS)
+#   deathsState <- filter(deathsUSTidy, Province_State == stateUS)
 
-  sumState <- prepDF(confirmedState, deathsState)
-  plotUnit(sumState, stateUS, paste0(stateUS," - New Cases Per Day"), paste0(stateUS, " - Deaths per Day"), startDir );
+#   sumState <- prepDF(confirmedState, deathsState)
+#   plotUnit(sumState, stateUS, paste0(stateUS," - New Cases Per Day"), paste0(stateUS, " - Deaths per Day"), startDir );
 
-  countyDir <- paste0("/figures/",stateUS);
-  if (dir.exists(paste0(getwd(),countyDir)) == FALSE) {
-    dir.create(paste0(getwd(),countyDir))
-  }
-  ## loop through counties in each state
-  countyState = factor(confirmedState$Admin2)
-  for (county in levels(countyState)) {
-    confirmedCounty <- filter(confirmedState, Admin2 == county)
-    deathsCounty <- filter(deathsState, Admin2 == county)
-    sumCounty <- prepDF(confirmedCounty, deathsCounty)
-    plotUnit(sumCounty, county, paste0(county," - New Cases Per Day"), paste0(county, " - Deaths per Day"), paste0(startDir,stateUS,"/" ) );
-  }
-}
+#   countyDir <- paste0("/figures/",stateUS);
+#   if (dir.exists(paste0(getwd(),countyDir)) == FALSE) {
+#     dir.create(paste0(getwd(),countyDir))
+#   }
+#   ## loop through counties in each state
+#   countyState = factor(confirmedState$Admin2)
+#   for (county in levels(countyState)) {
+#     confirmedCounty <- filter(confirmedState, Admin2 == county)
+#     deathsCounty <- filter(deathsState, Admin2 == county)
+#     sumCounty <- prepDF(confirmedCounty, deathsCounty)
+#     plotUnit(sumCounty, county, paste0(county," - New Cases Per Day"), paste0(county, " - Deaths per Day"), paste0(startDir,stateUS,"/" ) );
+#   }
+# }
 
 ## update MySQL db with US daily reports
 con <- dbConnect(MySQL(), user=user_name, password=user_pw, dbname=db_name, host=db_host)
