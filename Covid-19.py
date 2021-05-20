@@ -157,11 +157,11 @@ def createBarChart(x, y, jurisdiction, isConfirmed, cum_total, file_path):
     if isConfirmed:
         file_name = jurisdiction + "Confirmed.png"
         title2 = " - New Cases per Day"
-        cum_str = f"{cum_total:,}" + " cases"
+        cum_str = '{:,}'.format(cum_total) + " cases"
     else:
         file_name = jurisdiction + "Deaths.png"
         title2 = " - Deaths per Day"
-        cum_str = f"{cum_total:,}" + " deaths"
+        cum_str = '{:,}'.format(cum_total) + " deaths"
 
     plt.title(jurisdiction + title2, **title_font)
     plt.ylabel("")
