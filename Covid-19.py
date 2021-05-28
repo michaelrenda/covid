@@ -108,6 +108,7 @@ def createBarChart(x, y, jurisdiction, isConfirmed, cum_total, file_path):
 
 
     plt.bar(x, y, color='blue', width = 1.9)
+    plt.axhline(0, color='blue')
 
     y2 = savgol_filter(y, 21, 2)
     ax.plot(x, y2, color='green', linewidth=5)
